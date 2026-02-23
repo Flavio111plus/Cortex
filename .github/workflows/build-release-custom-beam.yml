@@ -100,7 +100,7 @@ jobs:
 
           # Windows 和 macOS 暂时使用官方 action
           - label: Windows x86_64
-            os: windows-latest
+            os: windows-2022
             rust-target: x86_64-pc-windows-msvc
             burrito-target: windows
             sidecar-triple: x86_64-pc-windows-msvc
@@ -109,7 +109,7 @@ jobs:
             use-custom-beam: false
 
           - label: macOS aarch64
-            os: macos-latest
+            os: macos-14
             rust-target: aarch64-apple-darwin
             burrito-target: macos_m1
             sidecar-triple: aarch64-apple-darwin
@@ -144,6 +144,8 @@ jobs:
         with:
           elixir-version: ${{ env.ELIXIR_VERSION }}
           otp-version: ${{ env.OTP_VERSION }}
+        env:
+          ImageOS: ${{ runner.os == 'Windows' && 'win22' || (runner.os == 'macOS' && 'macos14' || '') }}
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v1
