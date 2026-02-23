@@ -48,14 +48,16 @@ defmodule Cortex.Tools.Handlers.ShellCommand do
         timeout = Map.get(args, :timeout, @default_timeout)
         project_root = Map.get(ctx, :project_root, Workspaces.workspace_root())
         session_id = Map.get(ctx, :session_id)
-        do_execute(command, timeout, project_root, session_id)
+        agent_id = Map.get(ctx, :agent_id)
+        do_execute(command, timeout, project_root, session_id, agent_id)
     end
   end
 
-  defp do_execute(command, timeout, project_root, session_id) do
+  defp do_execute(command, timeout, project_root, session_id, agent_id) do
     # 1. 安全检查
     with :ok <- check_command_safety(command, session_id),
-         :ok <- Cortex.Tools.ShellInterceptor.check(command) do
+         :ok <- Cortex.Tools.ShellInterceptor.check(command),
+         :ok <- Cortex.Tools.ShellPathGuard.check(command, project_root, agent_id: agent_id) do
       # 2. 发射调用信号
       SignalHub.emit(
         "tool.call.shell",

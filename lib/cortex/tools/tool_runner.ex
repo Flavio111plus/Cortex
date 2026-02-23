@@ -3,20 +3,27 @@ defmodule Cortex.Tools.ToolRunner do
   Single entry point for tool execution.
   """
 
+  alias Cortex.Core.ContentRedactor
+  alias Cortex.Core.SensitiveFileDetector
   alias Cortex.Tools.Registry
   alias Cortex.Tools.Truncate
 
   def execute(tool_name, args, ctx) do
     case Registry.get(tool_name) do
       {:ok, tool} ->
+        normalized_args = normalize_args(args)
+
         {elapsed_us, result} =
           :timer.tc(fn ->
-            tool.module.execute(normalize_args(args), ctx)
+            tool.module.execute(normalized_args, ctx)
           end)
 
         elapsed_ms = div(elapsed_us, 1000)
 
-        case maybe_truncate(tool_name, result) do
+        truncated = maybe_truncate(tool_name, result)
+        redacted = maybe_redact(truncated, tool_name, normalized_args)
+
+        case redacted do
           {:ok, output} -> {:ok, output, elapsed_ms}
           {:error, reason} -> {:error, reason, elapsed_ms}
         end
@@ -45,6 +52,37 @@ defmodule Cortex.Tools.ToolRunner do
   end
 
   defp maybe_truncate(_tool_name, result), do: result
+
+  defp maybe_redact({:ok, content}, tool_name, args) when is_binary(content) do
+    path = get_path_from_args(tool_name, args)
+
+    if path do
+      case SensitiveFileDetector.detect(path) do
+        :none ->
+          {:ok, content}
+
+        mode ->
+          {redacted, _changed?} = ContentRedactor.redact(content, mode: mode, path: path)
+          {:ok, redacted}
+      end
+    else
+      if tool_name == "shell" do
+        {redacted, _} = ContentRedactor.redact(content, mode: :value_redact)
+        {:ok, redacted}
+      else
+        {:ok, content}
+      end
+    end
+  end
+
+  defp maybe_redact(result, _tool_name, _args), do: result
+
+  defp get_path_from_args(tool_name, args)
+       when tool_name in ["read_file", "write_file", "edit_file"] do
+    Map.get(args, :path) || Map.get(args, "path")
+  end
+
+  defp get_path_from_args(_, _), do: nil
 
   defp format_truncated_result(result) do
     marker =

@@ -211,6 +211,7 @@ defmodule Cortex.Agents.LLMAgent.ToolExecution do
            result =
              ToolRunner.execute(call_data.name, call_data.args, %{
                session_id: session_id,
+               agent_id: session_id,
                project_root: Workspaces.workspace_root()
              })
 

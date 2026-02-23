@@ -92,8 +92,9 @@ defmodule Cortex.MixProject do
         },
         burrito: [
           targets: [
-            # windows: [os: :windows, cpu: :x86_64],
-            linux: [os: :linux, cpu: :x86_64]
+            windows: [os: :windows, cpu: :x86_64],
+            linux: [os: :linux, cpu: :x86_64],
+            macos_m1: [os: :darwin, cpu: :aarch64]
           ],
           debug: Mix.env() != :prod,
           debug_interpreter: Mix.env() != :prod

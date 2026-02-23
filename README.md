@@ -68,15 +68,15 @@ Minimum runtime variables:
 Example:
 
 ```bash
-export RELEASE_NAME=jido_studio
-export DATABASE_PATH=./jido_studio_prod.db
+export RELEASE_NAME=cortex
+export DATABASE_PATH=./cortex_prod.db
 export PORT=5005
 export PHX_SERVER=true
 export SECRET_KEY_BASE="<your-secret-key>"
 export AUTH_USER="admin"
 export AUTH_PASS="admin"
 
-./jido_studio_linux
+./cortex_linux
 ```
 
 Notes:

@@ -345,6 +345,19 @@
     eventually?: false,
     assert_class: :C
   },
+  assert_tool_result_not_contains: %{
+    name: :assert_tool_result_not_contains,
+    kind: :then,
+    args: %{
+      value: %{type: :string, required?: true, allowed: nil}
+    },
+    outputs: %{},
+    boundary: :test_runtime,
+    scopes: [:unit, :integration],
+    async?: false,
+    eventually?: false,
+    assert_class: :C
+  },
   steering_inject: %{
     name: :steering_inject,
     kind: :when,

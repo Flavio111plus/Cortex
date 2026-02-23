@@ -28,7 +28,8 @@ defmodule Cortex.BDD.Instructions.V1.Tool do
       :assert_tools_unregistered,
       :parse_skill_command,
       :assert_skill_command,
-      :assert_tool_result
+      :assert_tool_result,
+      :assert_tool_result_not_contains
     ])
   end
 
@@ -218,6 +219,15 @@ defmodule Cortex.BDD.Instructions.V1.Tool do
           assert actual_str =~ "[TRUNCATED:",
                  "Expected result to be truncated, but got: #{inspect(actual)}"
         end
+
+        {:ok, ctx}
+
+      {:then, :assert_tool_result_not_contains} ->
+        actual = Map.fetch!(ctx, :last_tool_result)
+        actual_str = if is_binary(actual), do: actual, else: inspect(actual)
+
+        refute String.contains?(actual_str, args.value),
+               "Expected result NOT to contain '#{args.value}', but it was found in: #{String.slice(actual_str, 0, 200)}"
 
         {:ok, ctx}
 

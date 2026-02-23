@@ -19,11 +19,7 @@ defmodule CortexWeb.Router do
   end
 
   scope "/", CortexWeb do
-    if Application.compile_env(:cortex, :require_admin, true) do
-      pipe_through [:browser, :require_admin]
-    else
-      pipe_through :browser
-    end
+    pipe_through [:browser, :require_admin]
 
     live_session :admin, on_mount: [], layout: {CortexWeb.Layouts, :app} do
       live "/", JidoLive, :index
@@ -53,15 +49,19 @@ defmodule CortexWeb.Router do
   end
 
   def check_auth(conn, _opts) do
-    with {user, pass} <- Plug.BasicAuth.parse_basic_auth(conn),
-         true <- user == System.get_env("AUTH_USER", "admin"),
-         true <- pass == System.get_env("AUTH_PASS", "admin") do
+    if System.get_env("DESKTOP_MODE") == "true" do
       conn
     else
-      _ ->
+      with {user, pass} <- Plug.BasicAuth.parse_basic_auth(conn),
+           true <- user == System.get_env("AUTH_USER", "admin"),
+           true <- pass == System.get_env("AUTH_PASS", "admin") do
         conn
-        |> Plug.BasicAuth.request_basic_auth()
-        |> halt()
+      else
+        _ ->
+          conn
+          |> Plug.BasicAuth.request_basic_auth()
+          |> halt()
+      end
     end
   end
 

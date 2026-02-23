@@ -190,7 +190,8 @@ async fn start_backend(
         .env("PORT", port.to_string())
         .env("MIX_ENV", "prod")
         .env("RELEASE_NAME", "cortex") // Ensure desktop mode
-        .env("PHX_SERVER", "true"); // Enable Phoenix server
+        .env("PHX_SERVER", "true") // Enable Phoenix server
+        .env("DESKTOP_MODE", "true"); // Skip HTTP Basic Auth for local desktop
     let (_rx, child) = sidecar_command.spawn()?;
     // Save child process handle for later termination
     if let Ok(mut child_guard) = backend_child.lock() {
