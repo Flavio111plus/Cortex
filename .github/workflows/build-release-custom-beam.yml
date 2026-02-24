@@ -11,6 +11,7 @@ env:
   OTP_SHORT: "28"
   ELIXIR_VERSION: "1.19.5"
   UBUNTU_VERSION: "22.04"
+  ZIG_VERSION: "0.15.2"
 
 jobs:
   build-server:
@@ -51,11 +52,14 @@ jobs:
       - name: Install Burrito dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y xz-utils
-          # 安装 zig
-          wget -q https://ziglang.org/download/0.13.0/zig-linux-x86_64-0.13.0.tar.xz
-          tar -xf zig-linux-x86_64-0.13.0.tar.xz
-          sudo mv zig-linux-x86_64-0.13.0 /usr/local/zig
+          sudo apt-get install -y xz-utils jq
+          # 安装 zig（从 index.json 解析）
+          index="$(curl -fsSL https://ziglang.org/download/index.json)"
+          zig_url="$(printf '%s' "$index" | jq -r ".\"${ZIG_VERSION}\".\"x86_64-linux\".tarball")"
+          zig_pkg="$(basename "$zig_url")"
+          wget -q "$zig_url"
+          tar -xf "$zig_pkg"
+          sudo mv "${zig_pkg%.tar.xz}" /usr/local/zig
           sudo ln -sf /usr/local/zig/zig /usr/local/bin/zig
           zig version
 
@@ -182,11 +186,14 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf xz-utils
-          # 安装 zig（Burrito 依赖）
-          wget -q https://ziglang.org/download/0.13.0/zig-linux-x86_64-0.13.0.tar.xz
-          tar -xf zig-linux-x86_64-0.13.0.tar.xz
-          sudo mv zig-linux-x86_64-0.13.0 /usr/local/zig
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf xz-utils jq
+          # 安装 zig（Burrito 依赖，从 index.json 解析）
+          index="$(curl -fsSL https://ziglang.org/download/index.json)"
+          zig_url="$(printf '%s' "$index" | jq -r ".\"${ZIG_VERSION}\".\"x86_64-linux\".tarball")"
+          zig_pkg="$(basename "$zig_url")"
+          wget -q "$zig_url"
+          tar -xf "$zig_pkg"
+          sudo mv "${zig_pkg%.tar.xz}" /usr/local/zig
           sudo ln -sf /usr/local/zig/zig /usr/local/bin/zig
           zig version
 
@@ -200,16 +207,34 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          # 安装 zig
-          Invoke-WebRequest -Uri "https://ziglang.org/download/0.13.0/zig-windows-x86_64-0.13.0.zip" -OutFile "zig.zip"
-          Expand-Archive -Path "zig.zip" -DestinationPath "C:\"
-          echo "C:\zig-windows-x86_64-0.13.0" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          # 安装 zig（从 index.json 解析）
+          $index = Invoke-WebRequest -Uri "https://ziglang.org/download/index.json" | Select-Object -ExpandProperty Content | ConvertFrom-Json
+          $zigUrl = $index.$env:ZIG_VERSION.'x86_64-windows'.tarball
+          $zigPkg = Split-Path $zigUrl -Leaf
+          Invoke-WebRequest -Uri $zigUrl -OutFile $zigPkg
+          Expand-Archive -Path $zigPkg -DestinationPath "C:\"
+          $zigDir = $zigPkg -replace '\.zip$',''
+          echo "C:\$zigDir" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
           # xz 已经预装在 Windows runner
 
       - name: Install Burrito dependencies (macOS)
         if: runner.os == 'macOS'
         run: |
-          brew install zig xz
+          brew install xz jq
+          arch="$(uname -m)"
+          if [ "$arch" = "arm64" ] || [ "$arch" = "aarch64" ]; then
+            zig_arch="aarch64-macos"
+          else
+            zig_arch="x86_64-macos"
+          fi
+          index="$(curl -fsSL https://ziglang.org/download/index.json)"
+          zig_url="$(printf '%s' "$index" | jq -r ".[\"${ZIG_VERSION}\"].\"${zig_arch}\".tarball")"
+          zig_pkg="$(basename "$zig_url")"
+          curl -fsSL "$zig_url" -o "${zig_pkg}"
+          tar -xf "${zig_pkg}"
+          sudo mv "${zig_pkg%.tar.xz}" /usr/local/zig
+          sudo ln -sf /usr/local/zig/zig /usr/local/bin/zig
+          zig version
 
       - name: Cache Mix Dependencies
         uses: actions/cache@v4
