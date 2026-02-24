@@ -2,8 +2,14 @@ name: Build Release (Custom BEAM)
 
 on:
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Git tag to publish the release under (optional for manual dispatch).'
+        required: false
+        default: ''
   push:
     branches: [main, master, test-custom-beam]
+    tags: ['*']
 
 env:
   MIX_ENV: prod
@@ -286,3 +292,64 @@ jobs:
           name: cortex-desktop-${{ matrix.label }}
           path: |
             src-tauri/target/${{ matrix.rust-target }}/release/bundle/**
+
+  publish-release:
+    name: Publish GitHub Release
+    needs: [build-server, build-desktop]
+    runs-on: ubuntu-22.04
+    if: |
+      (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')) ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.release_tag != '')
+    env:
+      RELEASE_TAG: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') && github.ref_name || github.event.inputs.release_tag }}
+    steps:
+      - name: Download server artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: cortex-server-linux-x86_64
+          path: release-artifacts
+
+      - name: Download Linux desktop artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: 'cortex-desktop-Linux x86_64'
+          path: release-artifacts
+
+      - name: Download Windows desktop artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: 'cortex-desktop-Windows x86_64'
+          path: release-artifacts
+
+      - name: Download macOS desktop artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: 'cortex-desktop-macOS aarch64'
+          path: release-artifacts
+
+      - name: Package release assets
+        run: |
+          set -euo pipefail
+          mkdir -p release-assets
+          tar -czf release-assets/cortex-server-linux-x86_64.tar.gz \
+            -C release-artifacts/cortex-server-linux-x86_64 burrito_out/cortex_linux
+          tar -czf release-assets/cortex-desktop-linux-x86_64.tar.gz \
+            -C "release-artifacts/cortex-desktop-Linux x86_64" .
+          tar -czf release-assets/cortex-desktop-windows-x86_64.tar.gz \
+            -C "release-artifacts/cortex-desktop-Windows x86_64" .
+          tar -czf release-assets/cortex-desktop-macos-aarch64.tar.gz \
+            -C "release-artifacts/cortex-desktop-macOS aarch64" .
+
+      - name: Create GitHub release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          name: Release ${{ env.RELEASE_TAG }}
+          body: |
+            Artifacts built by the custom BEAM workflow.
+          files: |
+            release-assets/cortex-server-linux-x86_64.tar.gz
+            release-assets/cortex-desktop-linux-x86_64.tar.gz
+            release-assets/cortex-desktop-windows-x86_64.tar.gz
+            release-assets/cortex-desktop-macos-aarch64.tar.gz

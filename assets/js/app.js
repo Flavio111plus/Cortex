@@ -5,8 +5,10 @@ import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "topbar"
 import "../css/app.css"
+import { CodeMirrorHook } from "./hooks/codemirror_hook"
 
 const Hooks = {
+  CodeMirrorHook,
   ScrollToBottom: {
     mounted() {
       this.scrollToBottom();
