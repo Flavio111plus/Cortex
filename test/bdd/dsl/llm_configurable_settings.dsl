@@ -30,7 +30,7 @@
   GIVEN search_settings_clean
   WHEN update_search_provider provider="brave"
   THEN search_provider_is provider="brave"
-  THEN signal_emitted type="config.search.updated"
+  THEN assert_signal_emitted type="config.search.updated"
 
 [SCENARIO: BDD-SEARCH-003] TITLE: 验证 provider 有效性 TAGS: unit search
   GIVEN search_settings_clean
@@ -51,6 +51,6 @@
 
 [SCENARIO: BDD-TITLE-003] TITLE: 关闭模式不触发生成 TAGS: unit title
   GIVEN title_settings_clean
-  GIVEN title_mode_is mode="disabled"
+  WHEN set_title_mode mode="disabled"
   WHEN trigger_title_generation
   THEN title_generation_skipped
