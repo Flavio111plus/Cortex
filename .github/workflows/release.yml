@@ -302,6 +302,23 @@ jobs:
           cp "burrito_out/${{ matrix.burrito-bin }}" \
              "src-tauri/binaries/cortex_backend-${{ matrix.sidecar-triple }}${{ matrix.sidecar-ext }}"
 
+      - name: Sync version to Tauri config
+        shell: bash
+        run: |
+          # Extract version from mix.exs
+          VERSION=$(grep 'version:' mix.exs | head -n1 | sed 's/.*"\(.*\)".*/\1/')
+          echo "Detected version: $VERSION"
+          
+          # Update tauri.conf.json (cross-platform)
+          sed "s/\"version\": \"[^\"]*\"/\"version\": \"$VERSION\"/" src-tauri/tauri.conf.json > tmp.json
+          mv tmp.json src-tauri/tauri.conf.json
+          echo "✅ Updated tauri.conf.json to $VERSION"
+          
+          # Update Cargo.toml (cross-platform)
+          sed "s/^version = \"[^\"]*\"/version = \"$VERSION\"/" src-tauri/Cargo.toml > tmp.toml
+          mv tmp.toml src-tauri/Cargo.toml
+          echo "✅ Updated Cargo.toml to $VERSION"
+
       - name: Install Tauri CLI
         shell: bash
         run: |
